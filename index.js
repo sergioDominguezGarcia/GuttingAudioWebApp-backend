@@ -12,5 +12,5 @@ app.use(bodyParser.urlencoded({
 );
 
 app.listen(port, () => {
-  console.log("Server stated on port " + port)
+  console.log("Server started on port " + port)
 });
