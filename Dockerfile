@@ -1,5 +1,4 @@
-FROM node:lts-slim as node_binaries
-
+FROM node:14.15.3-slim as node_binaries
 
 FROM ubuntu:20.04
 
@@ -19,7 +18,8 @@ RUN groupadd -g 1000 musicapp && \
 	chown musicapp:musicapp /app
 
 COPY --from=node_binaries /usr/local/bin/node /usr/local/bin/node
-RUN npm install -g yarn
+COPY --from=node_binaries /opt/yarn-v1.22.5 /opt/yarn-v1.22.5
+RUN ln -s /opt/yarn-v1.22.5/bin/yarn /usr/local/bin/yarn
 
 
 USER musicapp

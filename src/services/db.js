@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 export const connectToDb = async () => {
   try {
     console.log('Starting DB connection...')
-    await mongoose.connect('mongodb://localhost:27017/Gutting_Audio')
+    await mongoose.connect('mongodb://localhost:27017/musicapp')
     console.log('Connected to Gutting_Audio DataBase')
   } catch (error) {
     console.error('Error connecting to MongoDB:', error)
