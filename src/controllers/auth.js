@@ -28,32 +28,26 @@ export const login = async ({ email, password }) => {
 }
 
 /**
+ * @param {string} email
+ * @param {string} password
  * @param {string} firstName
  * @param {string} lastName
- * @param {number} age
- * @param {number} phone
- * @param {'admin' | 'client'} rol
- * @param {string} password
- * @param {string} document
  * @return {Promise<string>}
  */
 export const signup = async ({
   email,
   password,
-  age,
+
   firstName,
   lastName,
-  phone,
-  document,
+
+
 }) => {
   if (
     !email ||
     !password ||
     !firstName ||
-    !lastName ||
-    !age ||
-    !document ||
-    !phone
+    !lastName 
   ) {
     throw new Error('Some fields are missing')
   }
@@ -64,9 +58,6 @@ export const signup = async ({
     throw new Error('Email already has been used')
   }
 
-  if (age && typeof age !== 'number') {
-    throw new Error('Please provide a valid age')
-  }
 
   if (firstName && firstName.length < 2) {
     throw new Error('First name must be 2 characters or longer')
@@ -81,13 +72,10 @@ export const signup = async ({
 
   const hashedPassword = await bcrypt.hash(password, salt)
   const user = new User({
-    password: hashedPassword,
     email,
-    age,
+    password: hashedPassword,
     firstName,
     lastName,
-    phone,
-    document,
   })
 
   await user.save()
