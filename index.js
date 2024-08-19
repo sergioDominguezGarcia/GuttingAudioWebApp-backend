@@ -4,7 +4,9 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import { ensureAuthenticated } from './src/middleware/auth.js'
 import authRouter from './src/router/auth.js'
+import spotifyAuthRouter from './src/router/spotifyAuth.js' 
 import usersRouter from './src/router/user.js'
+import playlistsRoutes from './src/router/spoti.js'
 import connectToDb from './src/services/db.js'
 
 dotenv.config()
@@ -16,8 +18,11 @@ const startApp = async () => {
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
 
+ 
+  app.use('/api/spotify', playlistsRoutes)
   app.use(ensureAuthenticated)
   app.use('/auth', authRouter)
+  app.use('/auth', spotifyAuthRouter) 
   app.use('/users', usersRouter)
 
   try {

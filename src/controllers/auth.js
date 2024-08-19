@@ -14,8 +14,8 @@ export const login = async ({ email, password }) => {
 
   const user = await User.findOne({ email })
 
-  if (!user) {
-    throw new Error('User not found')
+  if (!user || user.authProvider === 'spotify') {
+    throw new Error('User not found or not registered locally')
   }
 
   const matchedPassword = await bcrypt.compare(password, user.password)
@@ -34,21 +34,8 @@ export const login = async ({ email, password }) => {
  * @param {string} lastName
  * @return {Promise<string>}
  */
-export const signup = async ({
-  email,
-  password,
-
-  firstName,
-  lastName,
-
-
-}) => {
-  if (
-    !email ||
-    !password ||
-    !firstName ||
-    !lastName 
-  ) {
+export const signup = async ({ email, password, firstName, lastName }) => {
+  if (!email || !password || !firstName || !lastName) {
     throw new Error('Some fields are missing')
   }
 
@@ -57,7 +44,6 @@ export const signup = async ({
   if (hasUser) {
     throw new Error('Email already has been used')
   }
-
 
   if (firstName && firstName.length < 2) {
     throw new Error('First name must be 2 characters or longer')
@@ -69,13 +55,15 @@ export const signup = async ({
 
   const saltRounds = 10
   const salt = await bcrypt.genSalt(saltRounds)
-
   const hashedPassword = await bcrypt.hash(password, salt)
+
   const user = new User({
     email,
     password: hashedPassword,
+    salt,
     firstName,
     lastName,
+    authProvider: 'local',
   })
 
   await user.save()
