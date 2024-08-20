@@ -19,10 +19,10 @@ const startApp = async () => {
   app.use(bodyParser.urlencoded({ extended: true }))
 
  
-  app.use('/api/spotify', playlistsRoutes)
   app.use(ensureAuthenticated)
+  app.use('/me', playlistsRoutes)
+  app.use('/api', spotifyAuthRouter) 
   app.use('/auth', authRouter)
-  app.use('/auth', spotifyAuthRouter) 
   app.use('/users', usersRouter)
 
   try {

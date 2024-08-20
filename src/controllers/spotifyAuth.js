@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import User from '../models/user.js'
 
 dotenv.config()
+
 /**
  * @param {string} userId - ID del usuario en la base de datos.
  * @return {Promise<Object>} - Objeto con el nuevo accessToken y refreshToken.
@@ -66,7 +67,8 @@ export const refreshTokenHandler = async (req, res) => {
 
 // Redirige a la autenticación de Spotify
 export const redirectToSpotify = (req, res) => {
-  const scopes = 'user-read-private user-read-email'
+  const scopes =
+    'user-read-private user-read-email playlist-read-private playlist-read-collaborative'
   const spotifyAuthUrl = `https://accounts.spotify.com/authorize?${querystring.stringify(
     {
       response_type: 'code',
@@ -149,6 +151,33 @@ export const handleSpotifyCallback = async (req, res) => {
     res.redirect(`/success?token=${jwtToken}`)
   } catch (error) {
     console.error('Error during Spotify OAuth callback:', error)
+    res.status(500).json({ message: 'Internal Server Error' })
+  }
+}
+
+// Función para obtener listas de reproducción usando tu access_token
+export const getMyPlaylists = async (req, res) => {
+  try {
+    // Recupera tu propio access_token
+    const accessToken = process.env.SPOTIFY_ACCESS_TOKEN
+
+    if (!accessToken) {
+      return res.status(401).json({ message: 'Access token is missing' })
+    }
+
+    // Solicitud para obtener listas de reproducción
+    const response = await axios.get(
+      'https://api.spotify.com/v1/me/playlists',
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+
+    res.json(response.data) // Devolver las listas de reproducción al frontend
+  } catch (error) {
+    console.error('Error fetching playlists:', error)
     res.status(500).json({ message: 'Internal Server Error' })
   }
 }

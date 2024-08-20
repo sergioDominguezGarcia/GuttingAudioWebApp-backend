@@ -67,6 +67,7 @@ export const signup = async ({ email, password, firstName, lastName }) => {
   })
 
   await user.save()
-
+  // return `/api/spotify?userId=${user._id}`
   return jwt.sign({ email, id: user._id }, process.env.TOKEN_SECRET)
+  
 }

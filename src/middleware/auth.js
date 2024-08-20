@@ -4,42 +4,30 @@ import User from '../models/user.js'
 const publicUrls = [
   '/auth/login',
   '/auth/signup',
-  '/auth/spotify/callback',
-  '/auth/spotify/redirect',
+  '/api/spotify',
+  '/api/spotify/callback',
+  '/api/refresh-token',
+  'api/auth/playlists',
 ]
 
-export const ensureAuthenticated = async (req, res, next) => {
-  // Excluye las URLs públicas de la autenticación
-  if (publicUrls.includes(req.originalUrl)) {
+export const ensureAuthenticated = (req, res, next) => {
+  // Permitir acceso a las rutas que no requieren autenticación
+  const publicRoutes = ['/api/spotify', '/api/spotify/callback']
+  if (publicRoutes.includes(req.path)) {
     return next()
   }
 
-  // Verifica la presencia del encabezado de autorización
-  if (!req.headers.authorization) {
-    return res.status(403).send({ message: 'You are not authenticated' })
-  }
-
-  // Obtén el token del encabezado
-  const token = req.headers.authorization.split(' ')[1]
+  const token = req.headers['authorization']
   if (!token) {
-    return res.status(403).send({ message: 'You are not authenticated' })
+    return res.status(401).json({ message: 'You are not authenticated' })
   }
 
-  // Verifica el token JWT
-  try {
-    const payload = jwt.verify(token, process.env.TOKEN_SECRET)
-    if (!payload || !payload.id) {
-      return res.status(403).send({ message: 'Invalid token' })
+  // Verifica el token
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Invalid token' })
     }
-
-    const user = await User.findById(payload.id)
-    if (!user) {
-      return res.status(401).send({ message: 'User not found' })
-    }
-
     req.user = user
     next()
-  } catch (err) {
-    return res.status(403).send({ message: 'Invalid token' })
-  }
+  })
 }
