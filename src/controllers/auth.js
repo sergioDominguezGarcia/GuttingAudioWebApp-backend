@@ -14,8 +14,13 @@ export const login = async ({ email, password }) => {
 
   const user = await User.findOne({ email })
 
-  if (!user || user.authProvider === 'spotify') {
-    throw new Error('User not found or not registered locally')
+  if (!user) {
+    throw new Error('User not found')
+  }
+
+  if (user.authProvider === 'spotify') {
+    // Redirigir al flujo de autenticación de Spotify si el usuario usa Spotify como proveedor de autenticación
+    return `/api/spotify?userId=${user._id}`
   }
 
   const matchedPassword = await bcrypt.compare(password, user.password)
@@ -24,6 +29,7 @@ export const login = async ({ email, password }) => {
     throw new Error('Invalid password')
   }
 
+  // Generar un token JWT
   return jwt.sign({ email, id: user._id }, process.env.TOKEN_SECRET)
 }
 
@@ -45,11 +51,11 @@ export const signup = async ({ email, password, firstName, lastName }) => {
     throw new Error('Email already has been used')
   }
 
-  if (firstName && firstName.length < 2) {
+  if (firstName.length < 2) {
     throw new Error('First name must be 2 characters or longer')
   }
 
-  if (lastName && lastName.length < 2) {
+  if (lastName.length < 2) {
     throw new Error('Last name must be 2 characters or longer')
   }
 
@@ -67,7 +73,7 @@ export const signup = async ({ email, password, firstName, lastName }) => {
   })
 
   await user.save()
-  // return `/api/spotify?userId=${user._id}`
-  return jwt.sign({ email, id: user._id }, process.env.TOKEN_SECRET)
-  
+
+  // Redirigir al flujo de autenticación de Spotify después de registrarse
+  return `/api/spotify?userId=${user._id}`
 }
