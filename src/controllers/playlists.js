@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 // Función para obtener el token de acceso utilizando Client Credentials Flow
-const getClientCredentialsToken = async () => {
+export const getClientCredentialsToken = async () => {
   try {
     const response = await axios.post(
       'https://accounts.spotify.com/api/token',

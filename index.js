@@ -6,7 +6,7 @@ import { ensureAuthenticated } from './src/middleware/auth.js'
 import authRouter from './src/router/auth.js'
 import spotifyAuthRouter from './src/router/spotifyAuth.js' 
 import usersRouter from './src/router/user.js'
-import playlistsRoutes from './src/router/spoti.js'
+import playlistsRoutes from './src/router/playlists.js'
 import connectToDb from './src/services/db.js'
 
 dotenv.config()
