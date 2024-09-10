@@ -4,30 +4,32 @@ import User from '../models/user.js'
 const publicUrls = [
   '/auth/login',
   '/auth/signup',
-  '/api/spotify',
-  '/api/spotify/callback',
-  '/api/refresh-token',
-  'api/auth/playlists',
 ]
-
-export const ensureAuthenticated = (req, res, next) => {
-  // Permitir acceso a las rutas que no requieren autenticación
-  const publicRoutes = ['/api/spotify', '/api/spotify/callback']
-  if (publicRoutes.includes(req.path)) {
-    return next()
-  }
-
-  const token = req.headers['authorization']
-  if (!token) {
-    return res.status(401).json({ message: 'You are not authenticated' })
-  }
-
-  // Verifica el token
-  jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: 'Invalid token' })
+export const ensureAuthenticated = async (request, response, next) => {
+  if (!publicUrls.includes(request.originalUrl)) {
+    if (!request.headers.authorization) {
+      return response.status(403).send({ message: 'You are not authenticated' })
     }
-    req.user = user
-    next()
-  })
+
+    const token = request.headers.authorization.split(' ')[1]
+    if (!token) {
+      return response.status(403).send({ message: 'You are not authenticated' })
+    }
+
+    const payload = jwt.decode(token, process.env.TOKEN_SECRET)
+
+    if (!payload || !payload.id) {
+      return response.status(403).send({ message: 'Wrong token' })
+    }
+
+    const user = await User.findOne({ _id: payload.id })
+
+    if (!user) {
+      return response.status(401).send({ message: 'Wrong token' })
+    }
+
+    request.user = user
+  }
+
+  next()
 }

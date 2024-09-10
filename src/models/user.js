@@ -22,32 +22,13 @@ const UserSchema = new mongoose.Schema(
       unique: true,
     },
     password: {
-      type: String, // Ahora opcional, solo para usuarios locales
+      type: String, 
     },
     salt: {
-      type: String, // Ahora opcional, solo para usuarios locales
+      type: String, 
     },
     document: {
       type: String,
-    },
-    spotifyId: {
-      type: String, // Opcional y único, solo para usuarios de Spotify
-      unique: true,
-      sparse: true,
-    },
-    displayName: {
-      type: String, // Nombre en Spotify, opcional
-    },
-    accessToken: {
-      type: String, // Token de acceso de Spotify, opcional
-    },
-    refreshToken: {
-      type: String, // Token de refresco de Spotify, opcional
-    },
-    authProvider: {
-      type: String,
-      enum: ['local', 'spotify'], // Distinción entre usuarios locales y de Spotify
-      default: 'local',
     },
     createdAt: {
       type: Date,
