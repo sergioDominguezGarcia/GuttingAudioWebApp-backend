@@ -20,14 +20,13 @@ export const uploadTrack = async (trackData, file) => {
   const newTrack = new Track({
     title: trackData.title,
     artist: trackData.artist,
-    genre: trackData.genre,
+    album: trackData.album,
     s3Url: s3Url.replace(
       `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`,
       `https://${cloudfrontURL}`
     ),
     duration: trackData.duration,
     price: trackData.price,
-    status: trackData.status || 'borrador',
   })
 
   // Guardar pista en MongoDB
