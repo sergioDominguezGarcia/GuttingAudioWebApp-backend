@@ -4,12 +4,12 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import { ensureAuthenticated } from './src/middleware/auth.js'
 import authRouter from './src/router/auth.js'
-
+import trackRouter from './src/router/track.js'
 import usersRouter from './src/router/user.js'
 
 import connectToDb from './src/services/db.js'
 
-dotenv.config()
+dotenv.config();
 
 const startApp = async () => {
   const app = express()
@@ -19,9 +19,9 @@ const startApp = async () => {
   app.use(bodyParser.urlencoded({ extended: true }))
 
  
-  app.use(ensureAuthenticated)
+  // app.use(ensureAuthenticated)
 
-
+  app.use('/tracks', trackRouter)
   app.use('/auth', authRouter)
   app.use('/users', usersRouter)
 

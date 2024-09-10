@@ -4,6 +4,9 @@ import User from '../models/user.js'
 const publicUrls = [
   '/auth/login',
   '/auth/signup',
+  '/tracks',
+  '/tracks/upload',
+  '/tracks/delete/:id',
 ]
 export const ensureAuthenticated = async (request, response, next) => {
   if (!publicUrls.includes(request.originalUrl)) {

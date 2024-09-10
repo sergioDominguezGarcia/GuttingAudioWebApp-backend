@@ -13,7 +13,8 @@ const UserSchema = new mongoose.Schema(
     },
     rol: {
       type: String,
-      enum: ['admin', 'client'],
+      enum: ['admin', 'user'],
+      default: 'user',
     },
     email: {
       type: String,
@@ -22,10 +23,10 @@ const UserSchema = new mongoose.Schema(
       unique: true,
     },
     password: {
-      type: String, 
+      type: String,
     },
     salt: {
-      type: String, 
+      type: String,
     },
     document: {
       type: String,
